@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
-import Person from './Person/Person.js'
+import Radium, { StyleRoot } from 'radium';
+import Person from './Person/Person.js';
 import './App.css';
 
 
@@ -13,14 +12,7 @@ class App extends Component {
       {id: 'sdfd', name: 'Stephanie', age: 26 }
     ],
     showPersons: false
-  }
-
-  componentDidMount() {
-    axios.get('https://jsonplaceholder.typicode.com/posts')
-      .then(response => {
-        this.setState({ posts: response.data })
-      });
-  }
+  };
 
   nameChangedHandler = (event, id) => {
     // get the person object with the matched id
@@ -57,12 +49,18 @@ class App extends Component {
   }
 
   render() {
+    // extended with :hover (Thx to Radium!)
     const style = {
-      backgroundColor: 'white',
+      backgroundColor: 'green',
+      color: 'white',
       font: 'inherit',
       border: '1px solid blue',
       padding: '8px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      ':hover': {
+        backgroundColor: 'lightgreen',
+        color: 'black'
+      }
     };
 
     let persons = null;
@@ -80,19 +78,36 @@ class App extends Component {
           })}
         </div>
       );
+
+      style.backgroundColor = 'red';
+      style[':hover'] = {
+          backgroundColor: 'salmon',
+          color: 'black'
+      };
+    }
+
+    // dynamic styling classes
+    const classes = [];
+    if (this.state.persons.length <= 2) {
+      classes.push('red');
+    }
+    if (this.state.persons.length <= 1) {
+      classes.push('bold');
     }
 
     return (
-      <div className="App">
-        <h1>Hi, I'm a React App</h1>
-        <p>This really working!</p>
-        <button 
-          style={ style }
-          onClick={ this.togglePersonsHandler }>Toggle Persons</button>
-        { persons }
-      </div>
+      <StyleRoot>
+        <div className="App">
+          <h1>Hi, I'm a React App</h1>
+          <p className={ classes.join(' ') }>This really working!</p>
+          <button 
+            style={ style }
+            onClick={ this.togglePersonsHandler }>Toggle Persons</button>
+          { persons }
+        </div>
+      </StyleRoot>
     );
   }
 }
 
-export default App;
+export default Radium(App);
